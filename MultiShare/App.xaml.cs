@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MultiShare.View;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -27,11 +28,17 @@ namespace MultiShare
             base.OnStartup(e);
 
             MainWindow mainWindow = new MainWindow();
+			mainWindow.Closed += MainWindow_Closed;
             MainWindow = mainWindow;
             mainWindow.Show();
         }
 
-        private void ProcessUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+		private void MainWindow_Closed(object sender, EventArgs e)
+		{
+			Shutdown();
+		}
+
+		private void ProcessUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
             string localAppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.Create);
 
