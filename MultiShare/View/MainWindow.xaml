@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MultiShare.View"
+        xmlns:m="clr-namespace:MultiShare.Model"
         xmlns:vm="clr-namespace:MultiShare.ViewModel"
         mc:Ignorable="d"
         x:Uid="mainWindow"
@@ -14,7 +15,7 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -22,9 +23,9 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <ListBox Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" x:Uid="devicesListBox" Margin="5" ItemsSource="{Binding Path=Model.Content}" SelectedIndex="{Binding SelectedDeviceIndex}" HorizontalContentAlignment="Stretch" DataContext="{Binding DevicesListViewModel}">
+        <ListBox Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" x:Uid="devicesListBox" Margin="5" ItemsSource="{Binding Devices, Mode=OneWay}" SelectedIndex="{Binding SelectedDeviceIndex}" HorizontalContentAlignment="Stretch">
             <ListBox.ItemTemplate>
-                <DataTemplate>
+                <DataTemplate DataType="m:Device">
                     <Border BorderBrush="Black">
                         <Grid x:Name="item">
                             <Grid.ColumnDefinitions>
@@ -38,7 +39,7 @@
                             <Border Grid.Column="0" Grid.Row="0" BorderThickness="1" BorderBrush="Black" Margin="5">
                                 <Image Source="{Binding Path=Photo, Mode=OneWay}" Width="50" Height="50" />
                             </Border>
-                            <Label Grid.Column="1" Grid.Row="0" Content="{Binding Path=Title, Mode=OneWay}" Margin="0,5" VerticalContentAlignment="Center" />
+                            <Label Grid.Column="1" Grid.Row="0" Content="{Binding MAC, Mode=OneWay}" Margin="0,5" VerticalContentAlignment="Center" />
                         </Grid>
                     </Border>
 

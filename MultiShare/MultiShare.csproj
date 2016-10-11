@@ -87,8 +87,10 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Model\Device.cs" />
     <Compile Include="Model\MultiShareModel.cs" />
-    <Compile Include="ViewModel\DevicesListViewModel.cs" />
+    <Compile Include="Server\MultiShareServer.cs" />
+    <Compile Include="ViewModel\Commands\SimpleCommand.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
