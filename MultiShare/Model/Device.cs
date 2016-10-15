@@ -19,11 +19,11 @@ namespace MultiShare.Model
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
-		private IPEndPoint _address;
+		private IPAddress _address;
 		/// <summary>
 		/// Сетевой адрес устройства-клиента.
 		/// </summary>
-		public IPEndPoint Address
+		public IPAddress Address
 		{
 			get { return _address; }
 			set
@@ -53,15 +53,9 @@ namespace MultiShare.Model
 			}
 		}
 
-		public Device(IPEndPoint address, PhysicalAddress MAC)
+		public Device(IPAddress address, PhysicalAddress MAC)
 		{
 			Address = address;
-			this.MAC = MAC;
-		}
-
-		public Device(IPAddress ip, int port, PhysicalAddress MAC)
-		{
-			Address = new IPEndPoint(ip, port);
 			this.MAC = MAC;
 		}
 	}

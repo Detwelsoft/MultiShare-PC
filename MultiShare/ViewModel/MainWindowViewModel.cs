@@ -12,7 +12,21 @@ using System.Threading.Tasks;
 
 namespace MultiShare.ViewModel
 {
-    public class MainWindowViewModel : INotifyPropertyChanged
+	public class DeviceEventArgs : EventArgs
+	{
+		private Device _device;
+		public Device Device
+		{
+			get { return _device; }
+		}
+
+		public DeviceEventArgs(Device device)
+		{
+			_device = device;
+		}
+	}
+
+	public class MainWindowViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -21,7 +35,7 @@ namespace MultiShare.ViewModel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-		private MultiShareServer Server = new MultiShareServer();
+		//private MultiShareServer Server = new MultiShareServer();
 
 		private int _selectedDeviceIndex = -1;
 		/// <summary>
@@ -40,10 +54,20 @@ namespace MultiShare.ViewModel
 				if (_selectedDeviceIndex != value)
 				{
 					_selectedDeviceIndex = value;
+					OnDeviceSelected(_selectedDeviceIndex);
 					OnPropertyChanged();
 				}
 			}
 		}
+
+		protected virtual void OnDeviceSelected(int deviceIndex)
+		{
+			Device device = Devices[deviceIndex];
+
+			DeviceSelect?.Invoke(this, new DeviceEventArgs(device));
+		}
+
+		public event EventHandler<DeviceEventArgs> DeviceSelect;
 
 		private ObservableCollection<Device> _devices = new ObservableCollection<Device>();
 		/// <summary>
@@ -54,18 +78,18 @@ namespace MultiShare.ViewModel
 			get { return _devices; }
 		}
 
-		public SimpleCommand RunServer { get; set; }
+		//public SimpleCommand RunServer { get; set; }
 
-		public MainWindowViewModel()
-		{
-			RunServer = new SimpleCommand(async () =>
-			{
-				await Server.StartAsync();
-			},
-			() =>
-			{
-				return true;
-			});
-		}
+		//public MainWindowViewModel()
+		//{
+		//	RunServer = new SimpleCommand(async () =>
+		//	{
+		//		await Server.StartAsync();
+		//	},
+		//	() =>
+		//	{
+		//		return true;
+		//	});
+		//}
 	}
 }
