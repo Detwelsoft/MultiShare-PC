@@ -41,7 +41,9 @@ namespace MultiShare.Server
 
 		private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
-		private bool _isRunning = false;
+        private BinaryWriter currentWriter=null;
+
+        private bool _isRunning = false;
 		public bool IsRunning
 		{
 			get { return _isRunning; }
@@ -103,7 +105,7 @@ namespace MultiShare.Server
 						}
 
 						byte[] macData = new byte[MAC_LENGTH];
-						Buffer.BlockCopy(clientHelloData, 0, macData, 0, MAC_LENGTH);
+						Buffer.BlockCopy(clientHelloData, 10, macData, 0, MAC_LENGTH);
 						PhysicalAddress mac = new PhysicalAddress(macData);
 
 						OnNewClient(new Device(clientIP.Address, mac));
@@ -122,21 +124,28 @@ namespace MultiShare.Server
 		{
 			_cancellationTokenSource.Cancel();
 		}
+        public Task SendMessage(byte[] message)
+        {
+            return Task.Run(() =>
+            {
+                if (currentWriter != null)
+                {
+                    currentWriter.Write(message);
+                }
+            });
+        }
 
 		public Task ConnectToClient(Device device)
 		{
 			return Task.Run(() =>
 			{
-				using (TcpClient server = new TcpClient())
-				{
-					server.Connect(device.Address, SERVER_SEND_PORT);
-
-					using (NetworkStream ns = server.GetStream())
-					{
-						BinaryWriter bw = new BinaryWriter(ns, Encoding.ASCII);
-						bw.Write(SERVER_TOKEN);
-					}
-				}
+                TcpClient server = new TcpClient();
+                server.Connect(device.Address, SERVER_SEND_PORT);
+                NetworkStream ns = server.GetStream();
+                BinaryWriter bw = new BinaryWriter(ns, Encoding.ASCII);
+                bw.Write(SERVER_TOKEN);
+                currentWriter = bw;
+                
 			});
 		}
 	}

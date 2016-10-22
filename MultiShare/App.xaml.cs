@@ -39,6 +39,7 @@ namespace MultiShare
 			MainWindowViewModel vm = mainWindow.DataContext as MainWindowViewModel;
 			Server.NewClient += Server_NewClient;
 			vm.DeviceSelect += DeviceSelect;
+            vm.MessageSend += MessageSend;
 
 			mainWindow.Closed += MainWindow_Closed;
             MainWindow = mainWindow;
@@ -54,6 +55,14 @@ namespace MultiShare
 			await Server.ConnectToClient(e.Device);
 		}
 
+        private async void MessageSend(object sender, MessageEventArgs e)
+        {
+            Encoding asciEnc = Encoding.ASCII;
+            /*MainWindowViewModel vm = null;
+            vm = MainWindow.DataContext as MainWindowViewModel;*/            
+            await Server.SendMessage(asciEnc.GetBytes(e.Message));
+            
+        }
 		private void Server_NewClient(object sender, NewClientEventArgs e)
 		{
 			MainWindowViewModel vm = null;

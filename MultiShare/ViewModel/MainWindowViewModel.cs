@@ -9,6 +9,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace MultiShare.ViewModel
 {
@@ -25,8 +26,21 @@ namespace MultiShare.ViewModel
 			_device = device;
 		}
 	}
+    public class MessageEventArgs : EventArgs
+    {
+        private string _message;
+        public string Message
+        {
+            get { return _message; }
+        }
 
-	public class MainWindowViewModel : INotifyPropertyChanged
+        public MessageEventArgs(string message)
+        {
+            _message = message;
+        }
+    }
+
+    public class MainWindowViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -35,9 +49,11 @@ namespace MultiShare.ViewModel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-		//private MultiShareServer Server = new MultiShareServer();
+        //private MultiShareServer Server = new MultiShareServer();
+        private string _messageText="";
 
 		private int _selectedDeviceIndex = -1;
+        public SimpleCommand MessageSendCommand { get; private set; }
 		/// <summary>
 		/// Номер выбранного устройства (номер первого = 0).
 		/// </summary>
@@ -56,7 +72,8 @@ namespace MultiShare.ViewModel
 					_selectedDeviceIndex = value;
 					OnDeviceSelected(_selectedDeviceIndex);
 					OnPropertyChanged();
-				}
+                    MessageSendCommand.RaiseCanExecuteChanged();
+                }
 			}
 		}
 
@@ -68,8 +85,9 @@ namespace MultiShare.ViewModel
 		}
 
 		public event EventHandler<DeviceEventArgs> DeviceSelect;
+        public event EventHandler<MessageEventArgs> MessageSend;
 
-		private ObservableCollection<Device> _devices = new ObservableCollection<Device>();
+        private ObservableCollection<Device> _devices = new ObservableCollection<Device>();
 		/// <summary>
 		/// Список подключённых устройств-клиентов.
 		/// </summary>
@@ -77,6 +95,34 @@ namespace MultiShare.ViewModel
 		{
 			get { return _devices; }
 		}
+        public string MessageText
+        {
+            get { return _messageText; }
+            set
+            {
+                if(value!=null && !value.Equals(_messageText))
+                {
+                    _messageText = value;                    
+                    OnPropertyChanged();
+                    MessageSendCommand.RaiseCanExecuteChanged();
+                }
+            }
+        }
+
+        public MainWindowViewModel()
+        {
+            MessageSendCommand = new SimpleCommand(SendMessage, CanSendMessage);
+        }
+
+        private void SendMessage()
+        {
+            MessageSend?.Invoke(this, new MessageEventArgs(_messageText));
+        }
+        private bool CanSendMessage()
+        {
+            return !string.IsNullOrWhiteSpace(_messageText)&&(SelectedDeviceIndex!=-1);
+        }
+        
 
 		//public SimpleCommand RunServer { get; set; }
 
