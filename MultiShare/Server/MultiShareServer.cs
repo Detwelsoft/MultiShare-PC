@@ -30,7 +30,6 @@ namespace MultiShare.Server
 	public class MultiShareServer
 	{
 		private const int SERVER_LISTEN_PORT = 49015;
-		//private const int SERVER_LISTEN_PORT = 41033;
 		private const int SERVER_SEND_PORT = 49016;
 
 		private const int MAC_LENGTH = 6;
