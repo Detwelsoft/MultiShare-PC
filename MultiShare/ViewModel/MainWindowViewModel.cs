@@ -48,8 +48,7 @@ namespace MultiShare.ViewModel
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
-        //private MultiShareServer Server = new MultiShareServer();
+		
         private string _messageText="";
 
 		private int _selectedDeviceIndex = -1;
@@ -122,20 +121,5 @@ namespace MultiShare.ViewModel
         {
             return !string.IsNullOrWhiteSpace(_messageText)&&(SelectedDeviceIndex!=-1);
         }
-        
-
-		//public SimpleCommand RunServer { get; set; }
-
-		//public MainWindowViewModel()
-		//{
-		//	RunServer = new SimpleCommand(async () =>
-		//	{
-		//		await Server.StartAsync();
-		//	},
-		//	() =>
-		//	{
-		//		return true;
-		//	});
-		//}
 	}
 }
