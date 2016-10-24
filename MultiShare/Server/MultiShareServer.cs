@@ -83,8 +83,7 @@ namespace MultiShare.Server
 				{
 					try
 					{
-						//_udpServer.Client.Bind(new IPEndPoint(IPAddress.Any, SERVER_))
-						//_udpServer.EnableBroadcast = true;
+						
 						udpReceiveTask = _udpServer.ReceiveAsync();
 						udpReceiveTask.Wait(cancellationToken);
 
