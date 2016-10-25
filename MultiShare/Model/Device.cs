@@ -42,7 +42,7 @@ namespace MultiShare.Model
 		/// </summary>
 		public PhysicalAddress MAC
 		{
-			get	{ return _mac; }
+			get { return _mac; }
 			set
 			{
 				if (_mac != value)

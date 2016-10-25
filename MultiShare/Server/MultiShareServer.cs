@@ -1,6 +1,5 @@
 ﻿using MultiShare.Model;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -9,7 +8,6 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 
 namespace MultiShare.Server
 {
@@ -40,9 +38,18 @@ namespace MultiShare.Server
 
 		private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
-        private BinaryWriter currentWriter=null;
+		private BinaryWriter _currentWriter = null;
+		private TcpClient _server = null;
 
-        private bool _isRunning = false;
+		public bool IsConnected
+		{
+			get
+			{
+				return _server != null && _currentWriter != null;
+			}
+		}
+
+		private bool _isRunning = false;
 		public bool IsRunning
 		{
 			get { return _isRunning; }
@@ -72,7 +79,7 @@ namespace MultiShare.Server
 			return Task.Run(() =>
 			{
 				IsRunning = true;
-				
+
 				CancellationToken cancellationToken = _cancellationTokenSource.Token;
 				IPEndPoint clientIP = new IPEndPoint(IPAddress.Any, 0);
 				byte[] clientHelloData;
@@ -82,7 +89,6 @@ namespace MultiShare.Server
 				{
 					try
 					{
-						
 						udpReceiveTask = _udpServer.ReceiveAsync();
 						udpReceiveTask.Wait(cancellationToken);
 
@@ -122,29 +128,43 @@ namespace MultiShare.Server
 		{
 			_cancellationTokenSource.Cancel();
 		}
-        public Task SendMessage(byte[] message)
-        {
-            return Task.Run(() =>
-            {
-                if (currentWriter != null)
-                {
-                    currentWriter.Write(message);
-                }
-            });
-        }
+
+		public Task SendMessage(string message)
+		{
+			return Task.Run(() =>
+			{
+				if (_currentWriter != null)
+				{
+					_currentWriter.Write(message);
+				}
+			});
+		}
 
 		public Task ConnectToClient(Device device)
 		{
 			return Task.Run(() =>
 			{
-                TcpClient server = new TcpClient();
-                server.Connect(device.Address, SERVER_SEND_PORT);
-                NetworkStream ns = server.GetStream();
-                BinaryWriter bw = new BinaryWriter(ns, Encoding.ASCII);
-                bw.Write(SERVER_TOKEN);
-                currentWriter = bw;
-                
+				TcpClient server = new TcpClient();
+				server.Connect(device.Address, SERVER_SEND_PORT);
+				NetworkStream ns = server.GetStream();
+				BinaryWriter bw = new BinaryWriter(ns, Encoding.UTF8);
+				bw.Write(SERVER_TOKEN);
+				_currentWriter = bw;
+				_server = server;
 			});
+		}
+
+		public void DisconnectFromClient()
+		{
+			if (_server == null || _currentWriter == null)
+			{
+				throw new NotSupportedException("Server did not connect to any client!");
+			}
+
+			_currentWriter.Close();
+			_server.Close();
+			_currentWriter = null;
+			_server = null;
 		}
 	}
 }

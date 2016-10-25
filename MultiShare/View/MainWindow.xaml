@@ -51,11 +51,8 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <StackPanel Grid.Column="1" Grid.Row="0" Margin="5">
-            <TextBox Grid.Column="1" Grid.Row="0" x:Uid="messageText" Margin="20"  Text="{Binding MessageText,UpdateSourceTrigger=PropertyChanged}">                
-            </TextBox>
-            <Button Grid.Column="1" Grid.Row="0" x:Uid="sendMessageButton" Margin="20" Content="Send" Command="{Binding MessageSendCommand}">            
-            </Button>
-        </StackPanel>
+        
+        <TextBox Grid.Column="1" Grid.Row="0" x:Uid="messageText" Margin="5" Width="Auto" Text="{Binding MessageText,UpdateSourceTrigger=PropertyChanged}" />
+        <Button Grid.Column="1" Grid.Row="1" x:Uid="sendMessageButton" Margin="5" Width="Auto" Command="{Binding MessageSendCommand}" IsDefault="True">Send</Button>
     </Grid>
 </Window>

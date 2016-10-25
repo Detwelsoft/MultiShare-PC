@@ -18,32 +18,32 @@ using System.Windows.Threading;
 
 namespace MultiShare
 {
-    public partial class App : Application
-    {
-        private const string LOG_FILE_NAME = @"error.log";
+	public partial class App : Application
+	{
+		private const string LOG_FILE_NAME = @"error.log";
 
-		private readonly MultiShareServer _server = new MultiShareServer();
+		private MultiShareServer _server = new MultiShareServer();
 		public MultiShareServer Server { get { return _server; } }
 
-        public App()
-        {
-            ShutdownMode = ShutdownMode.OnExplicitShutdown;
-            DispatcherUnhandledException += ProcessUnhandledException;
-        }
+		public App()
+		{
+			ShutdownMode = ShutdownMode.OnExplicitShutdown;
+			DispatcherUnhandledException += ProcessUnhandledException;
+		}
 
-        protected override async void OnStartup(StartupEventArgs e)
-        {
-            base.OnStartup(e);
+		protected override async void OnStartup(StartupEventArgs e)
+		{
+			base.OnStartup(e);
 
-            MainWindow mainWindow = new MainWindow();
+			MainWindow mainWindow = new MainWindow();
 			MainWindowViewModel vm = mainWindow.DataContext as MainWindowViewModel;
 			Server.NewClient += Server_NewClient;
 			vm.DeviceSelect += DeviceSelect;
-            vm.MessageSend += MessageSend;
+			vm.MessageSend += MessageSend;
 
 			mainWindow.Closed += MainWindow_Closed;
-            MainWindow = mainWindow;
-            mainWindow.Show();
+			MainWindow = mainWindow;
+			mainWindow.Show();
 
 			//await Server.ConnectToClient(new Device(new IPEndPoint(new IPAddress(new byte[] { 192, 168, 0, 101 }), 49016), PhysicalAddress.None));
 
@@ -52,17 +52,19 @@ namespace MultiShare
 
 		private async void DeviceSelect(object sender, DeviceEventArgs e)
 		{
+			if (Server.IsConnected)
+			{
+				Server.DisconnectFromClient();
+			}
+
 			await Server.ConnectToClient(e.Device);
 		}
 
-        private async void MessageSend(object sender, MessageEventArgs e)
-        {
-            Encoding asciEnc = Encoding.ASCII;
-            /*MainWindowViewModel vm = null;
-            vm = MainWindow.DataContext as MainWindowViewModel;*/            
-            await Server.SendMessage(asciEnc.GetBytes(e.Message));
-            
-        }
+		private async void MessageSend(object sender, MessageEventArgs e)
+		{
+			await Server.SendMessage(e.Message);
+		}
+
 		private void Server_NewClient(object sender, NewClientEventArgs e)
 		{
 			MainWindowViewModel vm = null;
@@ -88,27 +90,27 @@ namespace MultiShare
 		}
 
 		private void ProcessUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
-        {
-            string localAppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.Create);
+		{
+			string localAppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.Create);
 
-            StringBuilder sb = new StringBuilder(localAppDataPath);
-            sb.Append(Path.DirectorySeparatorChar);
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            sb.Append(assembly.GetCustomAttribute<AssemblyCompanyAttribute>().Company);
-            sb.Append(Path.DirectorySeparatorChar);
-            sb.Append(assembly.GetCustomAttribute<AssemblyProductAttribute>().Product);
-            Directory.CreateDirectory(sb.ToString());
-            sb.Append(Path.DirectorySeparatorChar);
-            sb.Append(LOG_FILE_NAME);
-            string logFilePath = sb.ToString();
+			StringBuilder sb = new StringBuilder(localAppDataPath);
+			sb.Append(Path.DirectorySeparatorChar);
+			Assembly assembly = Assembly.GetExecutingAssembly();
+			sb.Append(assembly.GetCustomAttribute<AssemblyCompanyAttribute>().Company);
+			sb.Append(Path.DirectorySeparatorChar);
+			sb.Append(assembly.GetCustomAttribute<AssemblyProductAttribute>().Product);
+			Directory.CreateDirectory(sb.ToString());
+			sb.Append(Path.DirectorySeparatorChar);
+			sb.Append(LOG_FILE_NAME);
+			string logFilePath = sb.ToString();
 
-            using (StreamWriter sw = File.CreateText(logFilePath))
-            {
-                sw.WriteLine(DateTime.Now.ToString() + " - Unhandled exception:");
-                sw.WriteLine(e.Exception);
-            }
+			using (StreamWriter sw = File.CreateText(logFilePath))
+			{
+				sw.WriteLine(DateTime.Now.ToString() + " - Unhandled exception:");
+				sw.WriteLine(e.Exception);
+			}
 
-            MessageBox.Show($"The application has crashed due to the error. View log file at \"{ logFilePath }\"", "Exception");
-        }
-    }
+			MessageBox.Show($"The application has crashed due to the error. View log file at \"{ logFilePath }\"", "Exception");
+		}
+	}
 }
