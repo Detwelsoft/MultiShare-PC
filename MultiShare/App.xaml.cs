@@ -79,7 +79,10 @@ namespace MultiShare
 			{
 				window.Dispatcher.Invoke(() =>
 				{
-					vm.Devices.Add(e.Device);
+					if (!vm.Devices.Contains(e.Device))
+					{
+						vm.Devices.Add(e.Device);
+					}
 				});
 			}
 		}

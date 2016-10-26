@@ -40,6 +40,7 @@ namespace MultiShare.Server
 
 		private BinaryWriter _currentWriter = null;
 		private TcpClient _server = null;
+		private Device _connectedDevice = null;
 
 		public bool IsConnected
 		{
@@ -112,7 +113,12 @@ namespace MultiShare.Server
 						Buffer.BlockCopy(clientHelloData, 10, macData, 0, MAC_LENGTH);
 						PhysicalAddress mac = new PhysicalAddress(macData);
 
-						OnNewClient(new Device(clientIP.Address, mac));
+						Device device = new Device(clientIP.Address, mac);
+
+						if (_connectedDevice != device)
+						{
+							OnNewClient(device);
+						}
 					}
 					catch (OperationCanceledException)
 					{
@@ -133,10 +139,12 @@ namespace MultiShare.Server
 		{
 			return Task.Run(() =>
 			{
-				if (_currentWriter != null)
+				if (_currentWriter == null)
 				{
-					_currentWriter.Write(message);
+					throw new InvalidOperationException("Соединение не установлено");
 				}
+
+				_currentWriter.Write(message);
 			});
 		}
 
@@ -151,6 +159,7 @@ namespace MultiShare.Server
 				bw.Write(SERVER_TOKEN);
 				_currentWriter = bw;
 				_server = server;
+				_connectedDevice = device;
 			});
 		}
 
@@ -165,6 +174,7 @@ namespace MultiShare.Server
 			_server.Close();
 			_currentWriter = null;
 			_server = null;
+			_connectedDevice = null;
 		}
 	}
 }
