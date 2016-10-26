@@ -17,7 +17,7 @@ artifacts:
 deploy:
 - provider: GitHub
   tag: v$(APPVEYOR_BUILD_VERSION)
-  release: MultiShare (PC) v$(APPVEYOR_BUILD_VERSION)
+  release: MultiShare (PC)
   description: "Релиз MultiShare (PC), автоматически собранный с помощью AppVeyor"
   auth_token:
     secure: hJNjTvWa0u5NMM7SUMuO9Yr5/bF6Wd78mUebkrvhMTm9ZoT36GuH2pHZgpLoAAgT
