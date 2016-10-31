@@ -82,8 +82,13 @@ namespace MultiShare.ViewModel
 
 			DeviceSelect?.Invoke(this, new DeviceEventArgs(device));
 		}
+        protected virtual void OnDevicesUnselected(int deviceIndex)
+        {
+            DevicesUnselected?.Invoke(this, EventArgs.Empty);
+        }
 
 		public event EventHandler<DeviceEventArgs> DeviceSelect;
+        public event EventHandler DevicesUnselected;
 		public event EventHandler<MessageEventArgs> MessageSend;
 
 		private ObservableCollection<Device> _devices = new ObservableCollection<Device>();

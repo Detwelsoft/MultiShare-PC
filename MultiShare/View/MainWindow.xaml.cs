@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MultiShare.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,9 +18,21 @@ namespace MultiShare.View
 {
     public partial class MainWindow : Window
     {
+        private void DevicesUnselected (object sender, EventArgs e)
+        {
+            SendComponentsContainer.Visibility = Visibility.Hidden;
+        }
+        private void DevicesSelected(object sender, EventArgs e)
+        {
+            SendComponentsContainer.Visibility = Visibility.Visible;
+        }
         public MainWindow()
         {
             InitializeComponent();
+            MainWindowViewModel vm = DataContext as MainWindowViewModel;
+            vm.DevicesUnselected += DevicesUnselected;
+            vm.DeviceSelect += DevicesSelected;
         }
+
     }
 }
