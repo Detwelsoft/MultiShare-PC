@@ -40,8 +40,9 @@ namespace MultiShare
 			Server.NewClient += Server_NewClient;
 			vm.DeviceSelect += DeviceSelect;
 			vm.MessageSend += MessageSend;
+            vm.DevicesUnselected += DevisesUnselect;
 
-			mainWindow.Closed += MainWindow_Closed;
+            mainWindow.Closed += MainWindow_Closed;
 			MainWindow = mainWindow;
 			mainWindow.Show();
 
@@ -91,6 +92,14 @@ namespace MultiShare
 		{
 			Shutdown();
 		}
+
+        private void DevisesUnselect(object sender, EventArgs e)
+        {
+            if (Server.IsConnected)
+            {
+                Server.DisconnectFromClient();
+            }
+        }
 
 		private void ProcessUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
 		{

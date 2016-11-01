@@ -21,6 +21,7 @@ namespace MultiShare.View
         private void DevicesUnselected (object sender, EventArgs e)
         {
             SendComponentsContainer.Visibility = Visibility.Hidden;
+            devicesListBox.UnselectAll();
         }
         private void DevicesSelected(object sender, EventArgs e)
         {

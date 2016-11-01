@@ -12,6 +12,11 @@
     <Window.DataContext>
         <vm:MainWindowViewModel />
     </Window.DataContext>
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding EscCommand}" Gesture="ESC">
+        </KeyBinding>
+    </Window.InputBindings>
+
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -23,7 +28,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <ListBox Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" x:Uid="devicesListBox" Margin="5" ItemsSource="{Binding Devices, Mode=OneWay}" SelectedIndex="{Binding SelectedDeviceIndex}" HorizontalContentAlignment="Stretch">
+        <ListBox Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" x:Name="devicesListBox" x:Uid="devicesListBox" Margin="5" ItemsSource="{Binding Devices, Mode=OneWay}" SelectedIndex="{Binding SelectedDeviceIndex}" HorizontalContentAlignment="Stretch">
             <ListBox.ItemTemplate>
                 <DataTemplate DataType="m:Device">
                     <Border BorderBrush="Black">
