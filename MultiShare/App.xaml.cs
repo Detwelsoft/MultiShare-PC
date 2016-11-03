@@ -1,4 +1,5 @@
-﻿using MultiShare.Model;
+﻿using Hardcodet.Wpf.TaskbarNotification;
+using MultiShare.Model;
 using MultiShare.Server;
 using MultiShare.View;
 using MultiShare.ViewModel;
@@ -14,6 +15,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
 namespace MultiShare
@@ -21,6 +23,8 @@ namespace MultiShare
 	public partial class App : Application
 	{
 		private const string LOG_FILE_NAME = @"error.log";
+
+		private TaskbarIcon _taskbarIcon;
 
 		private MultiShareServer _server = new MultiShareServer();
 		public MultiShareServer Server { get { return _server; } }
@@ -34,6 +38,10 @@ namespace MultiShare
 		protected override async void OnStartup(StartupEventArgs e)
 		{
 			base.OnStartup(e);
+
+			_taskbarIcon = new TaskbarIcon();
+			_taskbarIcon.ToolTip = "MultiShare";
+			_taskbarIcon.IconSource = new BitmapImage(new Uri(@"pack://application:,,,/MultiShare;component/Images/Icons/Tray.ico"));
 
 			MainWindow mainWindow = new MainWindow();
 			MainWindowViewModel vm = mainWindow.DataContext as MainWindowViewModel;

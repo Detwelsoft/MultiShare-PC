@@ -8,7 +8,7 @@
         xmlns:vm="clr-namespace:MultiShare.ViewModel"
         mc:Ignorable="d"
         x:Uid="mainWindow"
-        Title="MultiShare" Height="350" Width="525" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+        Title="MultiShare" Height="350" Width="525" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" Icon="/MultiShare;component/Images/Icons/Tray.ico">
     <Window.DataContext>
         <vm:MainWindowViewModel />
     </Window.DataContext>

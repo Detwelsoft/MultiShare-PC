@@ -152,6 +152,7 @@ namespace MultiShare.Server
 		{
 			return Task.Run(() =>
 			{
+				Thread.Sleep(200);
 				TcpClient server = new TcpClient();
 				server.Connect(device.Address, SERVER_SEND_PORT);
 				NetworkStream ns = server.GetStream();
