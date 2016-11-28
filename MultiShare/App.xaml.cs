@@ -3,10 +3,12 @@ using MultiShare.Model;
 using MultiShare.Server;
 using MultiShare.View;
 using MultiShare.ViewModel;
+using MultiShare.ViewModel.Commands;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -15,6 +17,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
@@ -29,10 +32,19 @@ namespace MultiShare
 		private MultiShareServer _server = new MultiShareServer();
 		public MultiShareServer Server { get { return _server; } }
 
+		#region Команды
+		/// <summary>
+		/// Команда выхода из приложения.
+		/// </summary>
+		public SimpleCommand QuitCommand { get; set; }
+		#endregion
+
 		public App()
 		{
 			ShutdownMode = ShutdownMode.OnExplicitShutdown;
-			DispatcherUnhandledException += ProcessUnhandledException;
+			AppDomain.CurrentDomain.UnhandledException += ProcessUnhandledException;
+
+			QuitCommand = new SimpleCommand(() => { Shutdown(); });
 		}
 
 		protected override async void OnStartup(StartupEventArgs e)
@@ -42,6 +54,13 @@ namespace MultiShare
 			_taskbarIcon = new TaskbarIcon();
 			_taskbarIcon.ToolTip = "MultiShare";
 			_taskbarIcon.IconSource = new BitmapImage(new Uri(@"pack://application:,,,/MultiShare;component/Images/Icons/Tray.ico"));
+			_taskbarIcon.ContextMenu = new ContextMenu();
+			MenuItem quitMenuItem = new MenuItem()
+			{
+				Command = QuitCommand,
+				Header = "Выйти"
+			};
+			_taskbarIcon.ContextMenu.Items.Add(quitMenuItem);
 
 			MainWindow mainWindow = new MainWindow();
 			MainWindowViewModel vm = mainWindow.DataContext as MainWindowViewModel;
@@ -57,6 +76,13 @@ namespace MultiShare
 			//await Server.ConnectToClient(new Device(new IPEndPoint(new IPAddress(new byte[] { 192, 168, 0, 101 }), 49016), PhysicalAddress.None));
 
 			await Server.StartAsync();
+		}
+
+		protected override void OnExit(ExitEventArgs e)
+		{
+			_taskbarIcon.Dispose();
+
+			base.OnExit(e);
 		}
 
 		private async void DeviceSelect(object sender, DeviceEventArgs e)
@@ -109,28 +135,26 @@ namespace MultiShare
             }
         }
 
-		private void ProcessUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+		private void ProcessUnhandledException(object sender, UnhandledExceptionEventArgs e)
 		{
-			string localAppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.Create);
-
-			StringBuilder sb = new StringBuilder(localAppDataPath);
-			sb.Append(Path.DirectorySeparatorChar);
-			Assembly assembly = Assembly.GetExecutingAssembly();
-			sb.Append(assembly.GetCustomAttribute<AssemblyCompanyAttribute>().Company);
-			sb.Append(Path.DirectorySeparatorChar);
-			sb.Append(assembly.GetCustomAttribute<AssemblyProductAttribute>().Product);
-			Directory.CreateDirectory(sb.ToString());
-			sb.Append(Path.DirectorySeparatorChar);
-			sb.Append(LOG_FILE_NAME);
-			string logFilePath = sb.ToString();
+			StringBuilder localAppFolderPath = new StringBuilder(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.Create));
+			localAppFolderPath.Append(Path.DirectorySeparatorChar);
+			localAppFolderPath.Append(LOG_FILE_NAME);
+			string logFilePath = localAppFolderPath.ToString();
 
 			using (StreamWriter sw = File.CreateText(logFilePath))
 			{
 				sw.WriteLine(DateTime.Now.ToString() + " - Unhandled exception:");
-				sw.WriteLine(e.Exception);
+				Exception ex = (Exception)e.ExceptionObject;
+				StackTrace st = new StackTrace(ex, true);
+				StackFrame sf = st.GetFrame(0);
+
+				sw.WriteLine($"Exception was generated in line {sf.GetFileName()}:{sf.GetFileLineNumber()}:{sf.GetFileColumnNumber()}");
 			}
 
 			MessageBox.Show($"The application has crashed due to the error. View log file at \"{ logFilePath }\"", "Exception");
+
+			Process.Start(logFilePath);
 		}
 	}
 }

@@ -10,13 +10,18 @@ using System.Threading.Tasks;
 
 namespace MultiShare.Model
 {
-	public class Device : INotifyPropertyChanged
+	public class Device : INotifyPropertyChanged, IEquatable<Device>
 	{
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		protected virtual void OnPropertyChanged([CallerMemberName]string propertyName = "")
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+		}
+
+		public bool Equals(Device other)
+		{
+			return other.MAC.Equals(MAC);
 		}
 
 		private IPAddress _address;

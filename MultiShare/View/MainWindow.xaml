@@ -61,7 +61,7 @@
                 <RowDefinition />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <TextBox Grid.Column="0" Grid.Row="0" x:Uid="messageText" Margin="5" Width="Auto" Text="{Binding MessageText,UpdateSourceTrigger=PropertyChanged}" />
+            <TextBox Grid.Column="0" Grid.Row="0" x:Uid="messageText" Margin="5" Width="Auto" Text="{Binding MessageText,UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" AcceptsReturn="True" />
             <Button Grid.Column="0" Grid.Row="1" x:Uid="sendMessageButton" Margin="5" Width="Auto" Command="{Binding MessageSendCommand}" IsDefault="True">Send</Button>
         </Grid>
     </Grid>
