@@ -33,7 +33,12 @@ namespace MultiShare.View
             MainWindowViewModel vm = DataContext as MainWindowViewModel;
             vm.DevicesUnselected += DevicesUnselected;
             vm.DeviceSelect += DevicesSelected;
-        }
+        }       
 
+        private void OnWindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            e.Cancel = true;
+            Hide();
+        }
     }
 }

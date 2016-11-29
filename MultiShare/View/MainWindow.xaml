@@ -1,4 +1,4 @@
-﻿<Window x:Class="MultiShare.View.MainWindow"
+﻿<Window x:Name="___Без_имени_" x:Class="MultiShare.View.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -8,7 +8,7 @@
         xmlns:vm="clr-namespace:MultiShare.ViewModel"
         mc:Ignorable="d"
         x:Uid="mainWindow"
-        Title="MultiShare" Height="350" Width="525" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" Icon="/MultiShare;component/Images/Icons/Tray.ico">
+        Title="MultiShare" Height="350" Width="525" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" Icon="/MultiShare;component/Images/Icons/Tray.ico" Closing="OnWindowClosing">
     <Window.DataContext>
         <vm:MainWindowViewModel />
     </Window.DataContext>

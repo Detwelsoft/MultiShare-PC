@@ -37,6 +37,10 @@ namespace MultiShare
 		/// Команда выхода из приложения.
 		/// </summary>
 		public SimpleCommand QuitCommand { get; set; }
+        /// <summary>
+		/// Команда развертывания приложения из трея.
+		/// </summary>
+        public SimpleCommand UnTrayCommand { get; set; }
 		#endregion
 
 		public App()
@@ -45,6 +49,7 @@ namespace MultiShare
 			AppDomain.CurrentDomain.UnhandledException += ProcessUnhandledException;
 
 			QuitCommand = new SimpleCommand(() => { Shutdown(); });
+            UnTrayCommand = new SimpleCommand(()=> { MainWindow.Show(); MainWindow.WindowState = WindowState.Normal; });
 		}
 
 		protected override async void OnStartup(StartupEventArgs e)
@@ -61,6 +66,7 @@ namespace MultiShare
 				Header = "Выйти"
 			};
 			_taskbarIcon.ContextMenu.Items.Add(quitMenuItem);
+            _taskbarIcon.LeftClickCommand = UnTrayCommand;
 
 			MainWindow mainWindow = new MainWindow();
 			MainWindowViewModel vm = mainWindow.DataContext as MainWindowViewModel;
