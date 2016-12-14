@@ -1,0 +1,26 @@
+version: 0.1.{build}
+configuration: Release
+before_build:
+- cmd: nuget restore
+build:
+  verbosity: detailed
+after_build:
+- cmd: 7z a MultiShare-PC-%APPVEYOR_BUILD_VERSION%.zip %APPVEYOR_BUILD_FOLDER%\MultiShare\bin\%CONFIGURATION%\en-US\
+- cmd: 7z a MultiShare-PC-%APPVEYOR_BUILD_VERSION%.zip %APPVEYOR_BUILD_FOLDER%\MultiShare\bin\%CONFIGURATION%\x86\
+- cmd: 7z a MultiShare-PC-%APPVEYOR_BUILD_VERSION%.zip %APPVEYOR_BUILD_FOLDER%\MultiShare\bin\%CONFIGURATION%\x64\
+- cmd: 7z a MultiShare-PC-%APPVEYOR_BUILD_VERSION%.zip %APPVEYOR_BUILD_FOLDER%\MultiShare\bin\%CONFIGURATION%\*.dll
+- cmd: 7z a MultiShare-PC-%APPVEYOR_BUILD_VERSION%.zip %APPVEYOR_BUILD_FOLDER%\MultiShare\bin\%CONFIGURATION%\MultiShare.exe
+- cmd: 7z a MultiShare-PC-%APPVEYOR_BUILD_VERSION%.zip %APPVEYOR_BUILD_FOLDER%\MultiShare\bin\%CONFIGURATION%\MultiShare.exe.config
+artifacts:
+- path: MultiShare-PC-$(APPVEYOR_BUILD_VERSION).zip
+  name: MultiShare-PC-v$(APPVEYOR_BUILD_VERSION)
+deploy:
+- provider: GitHub
+  tag: v$(APPVEYOR_BUILD_VERSION)
+  release: MultiShare (PC)
+  description: "Релиз MultiShare (PC), автоматически собранный с помощью AppVeyor"
+  auth_token:
+    secure: hJNjTvWa0u5NMM7SUMuO9Yr5/bF6Wd78mUebkrvhMTm9ZoT36GuH2pHZgpLoAAgT
+  artifact: MultiShare-PC-v$(APPVEYOR_BUILD_VERSION)
+  draft: true
+  force_update: true
